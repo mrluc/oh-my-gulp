@@ -8,50 +8,45 @@ imagemin   = require 'gulp-imagemin'
 
 
 paths =
-  js_entry: [ './app/assets/js/app.coffee' ]
+  entry: [ './app/assets/js/app.coffee' ]
   js: [ './app/assets/js/**' ]
-  css: ['./app/assets/css/**/*.scss'],
+  scss: ['./app/assets/css/**/*.scss'],
   images: './app/assets/img/**/*'
+  build: './build/'
 
 handleErrors = (args...) ->
-  notify = require "gulp-notify"
-  notify.onError(
-    title: "Compile Error",
-    message: "<%= error.message %>"
-  ).apply( @, args )
-
-  @emit( 'end' ) #Keep gulp from hanging on this task
+  #require('gulp-notify').onError( title: "Compile Error",message: "<%= error.message %>" ).apply  @, args
+  console.log( args ) and emit 'end'
 
 
-# ### TASKS
-#
 gulp.task 'scripts', ->
-  browserify( entries: paths.js_entry, extensions: ['.coffee'] )
-    .bundle()
-      .pipe source 'bundle.js'   # text stream -> 'fake' file
-      .pipe gulp.dest './build/'
+  browserify
+    entries: paths.entry,
+    extensions:['.coffee']
+  .bundle()
+    .pipe source 'bundle.js'
+    .pipe gulp.dest paths.build
 
 gulp.task 'compass', ->
-	gulp.src paths.css
-		.pipe compass(
-			config_file: 'compass.rb',
-			css: 'build',
-			sass: 'src/sass'
-		)
+	gulp.src paths.scss
+		.pipe compass
+			config_file: './compass.rb',
+			css: "./build/css",
+			sass: './app/assets/css'
 		.on('error', handleErrors)
 		.pipe livereload()
 
 gulp.task 'images', ->
- gulp.src paths.images
+  gulp.src paths.images
     .pipe imagemin optimizationLevel: 5
     .pipe gulp.dest 'build/img'
 
 gulp.task 'watch', ->
 	gulp.watch paths.js, ['scripts']
-	gulp.watch paths.css, ['compass']
+	gulp.watch paths.scss, ['compass']
 	gulp.watch paths.images, ['images']
 	livereload()
 
 
 # called when you run `gulp` from cli
-gulp.task 'default', ['scripts', 'images', 'watch']
+gulp.task 'default', ['scripts', 'compass', 'images', 'watch']

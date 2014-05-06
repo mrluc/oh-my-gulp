@@ -28,7 +28,7 @@ gulp.task 'scripts', ->
     .pipe gulp.dest paths.build
 
 gulp.task 'compass', ->
-	gulp.src paths.scss
+  gulp.src paths.scss
 		.pipe compass
 			config_file: './compass.rb',
 			css: "./build/css",

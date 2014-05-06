@@ -29,12 +29,12 @@ gulp.task 'scripts', ->
 
 gulp.task 'compass', ->
   gulp.src paths.scss
-		.pipe compass
-			config_file: './compass.rb',
-			css: "./build/css",
-			sass: './app/assets/css'
-		.on('error', handleErrors)
-		.pipe livereload()
+    .pipe compass
+      config_file: './compass.rb',
+      css: "./build/css",
+      sass: './app/assets/css'
+    .on('error', handleErrors)
+    .pipe livereload()
 
 gulp.task 'images', ->
   gulp.src paths.images
